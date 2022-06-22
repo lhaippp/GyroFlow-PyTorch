@@ -1,0 +1,77 @@
+{
+    "hyperparameters": {
+        "learning_rate": 0.0001,
+        "batch_size": 4,
+        "val_batch_size": 1
+    },
+    "num_epochs": 1000,
+    "upsample": true,
+    "num_workers": 8,
+    "add_gyro_layer": 0,
+    "data_dir": "/data/jupyter/fusion_gyro_of/GOF\u6570\u636e\u96c6/500_RE_500_LL_500_Fog_500_Rain",
+    "test_data_dir": "/data/jupyter/fusion_gyro_of/fundamental_exp1/testset/Global/dataset",
+    "model_name": "GyroFlow",
+    "refine_model": "refine_UnFlow_spatial_transform",
+    "python_path": "/data/fusion_gyro_optical_flow/deep_gyro_of_fusion/fusion_gyro_of/bin/python",
+    "restore_file": false,
+    "with_spatial_transform": false,
+    "save_mode": "local",
+    "only_weights": true,
+    "occ_from_back": false,
+    "st_loss": 0.01,
+    "data_aug": {
+        "crop": true,
+        "hflip": false,
+        "para_crop": [
+            512,
+            640
+        ],
+        "swap": false
+    },
+    "loss_type": "UnFlowLoss",
+    "loss": {
+        "l1": 0.15,
+        "ssim": 0.85,
+        "tenary": 0
+    },
+    "stage_1": {
+        "if_warm_up": false,
+        "epoch": 100,
+        "loss": {
+            "l1": 0,
+            "ssim": 0,
+            "tenary": 1
+        }
+    },
+    "st_cfg": {
+        "add_noise": true,
+        "hflip": true,
+        "rotate": [
+            -0.2,
+            0.2,
+            -0.015,
+            0.015
+        ],
+        "squeeze": [
+            0.86,
+            1.16,
+            1.0,
+            1.0
+        ],
+        "trans": [
+            0.2,
+            0.015
+        ],
+        "vflip": true,
+        "zoom": [
+            1.0,
+            1.5,
+            0.985,
+            1.015
+        ]
+    },
+    "cpu": 4,
+    "memory": 15000,
+    "gpu": 1,
+    "model_dir": "experiments/experiment_SGF_ablation_study_GOF_clean_final_400_case/exp_2"
+}
