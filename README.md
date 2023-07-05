@@ -6,6 +6,8 @@ We also provide a MegEngine version, check at [GyroFlow](https://github.com/MegE
 
 Our presentation video: [[Youtube](https://www.youtube.com/watch?v=6gh40PyWdHM)][[Bilibili](https://www.bilibili.com/video/BV1Tr4y127kd/)].
 
+2023-07: Try our Journal Extended Version [GyroFlow+: Gyroscope-Guided Unsupervised Deep Homography and Optical Flow Learning](https://github.com/lhaippp/GyroFlowPlus)
+
 ## Dependencies
 
 * Requirements please refer to`requirements.txt`.
