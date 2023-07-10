@@ -40,6 +40,7 @@ The download link is [GoogleDrive](https://drive.google.com/file/d/1eG9W-AlKrQ_f
 ```
 ### GHOF
 2023.07.10: We release the GHOF_Clean&Final that contains 5 categories, as the benchmark is changed, we thus update the metrics.
+
 The pretrained model can be found at [GoogleDrive](https://drive.google.com/file/d/1dE7jKZS6RJNLWSrDY0q_pIJUFeo4JTqn/view?usp=sharing). Move the model to `./experiments/demo_experiment/exp_2/test_model_best.pth`.
 
 | BMK |  AVG   |  RE  |  FOG  |  DARK  |  RAIN  |  SNOW  |
