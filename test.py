@@ -16,7 +16,7 @@ import model.data_loader as data_loader
 
 from utils import utils
 from utils.manager import Manager
-from loss.loss import compute_metrics, compute_test_metrics
+from loss.loss import compute_metrics, compute_test_metrics, compute_test_metrics_v2, update_metrics
 from termcolor import colored
 
 parser = argparse.ArgumentParser()
@@ -129,11 +129,9 @@ def test(model, manager, split_label=False):
     for k, v in manager.test_status.items():
         manager.test_status[k].reset()
 
-    # image index
-    idx = 0
-
     # compute metrics over the dataset
     for idx, loader in enumerate(manager.test_dataloader):
+        flag = 'Clean' if idx == 0 else 'Final'
         for data_batch in loader:
             transformer = transforms.Normalize(mean=[0, 0, 0], std=[255, 255, 255])
             # move to GPU if available
@@ -145,59 +143,30 @@ def test(model, manager, split_label=False):
 
             data_batch["imgs"] = torch.cat([transformer(img1), transformer(img2)], 1)
 
-            mask = None
-
             # compute model output
             output_batch = model(data_batch)
             output_batch["flow_fw"][0] = padder.unpad(output_batch["flow_fw"][0])
 
             # compute all metrics on this batch and auto update to manager
-            gyro_batch = {"flow_fw": [data_batch["gyro_field"]]}
+            ret = compute_test_metrics_v2(data_batch, output_batch)
 
-            identity_batch = {"flow_fw": [torch.zeros_like(data_batch["gyro_field"]).cuda()]}
+            metrics = {}
+            # compute metrics
+            B = data_batch["img1"].size()[0]
 
-            metrics_iden = compute_test_metrics(data_batch, identity_batch, manager, "identity_epe", mask)
-            metrics_gyro = compute_test_metrics(data_batch, gyro_batch, manager, "gyro_epe", mask)
-            metrics_nn = compute_test_metrics(data_batch, output_batch, manager, "nn_epe", mask)
-            compute_metrics(data_batch, output_batch, manager, "nn_epe_" + str(idx))
+            if data_batch["label"][0] == "RE":
+                update_metrics(ret, metrics, B, manager, "RE-{}".format(flag))
+            elif data_batch["label"][0] == "Rain":
+                update_metrics(ret, metrics, B, manager, "RAIN-{}".format(flag))
+            elif data_batch["label"][0] == "Dark":
+                update_metrics(ret, metrics, B, manager, "DARK-{}".format(flag))
+            elif data_batch["label"][0] == "Fog":
+                update_metrics(ret, metrics, B, manager, "FOG-{}".format(flag))
+            elif data_batch["label"][0] == "SNOW":
+                update_metrics(ret, metrics, B, manager, "SNOW-{}".format(flag))
 
-            if split_label:
-                # print(data_batch["label"][0])
-                if data_batch["label"][0] == "Rain":
-                    compute_test_metrics(data_batch, identity_batch, manager, "I33_Rain_None", mask)
-                    compute_test_metrics(data_batch, gyro_batch, manager, "gyro_Rain_None", mask)
-                    compute_test_metrics(data_batch, output_batch, manager, "ours_Rain_None", mask)
-                    compute_metrics(data_batch, output_batch, manager, "ours_Rain_" + str(idx))
-                elif data_batch["label"][0] == "RE":
-                    compute_test_metrics(data_batch, identity_batch, manager, "I33_RE_None", mask)
-                    compute_test_metrics(data_batch, gyro_batch, manager, "gyro_RE_None", mask)
-                    compute_test_metrics(data_batch, output_batch, manager, "ours_RE_None", mask)
-                    compute_metrics(data_batch, output_batch, manager, "ours_RE_" + str(idx))
-                elif data_batch["label"][0] == "Dark":
-                    compute_test_metrics(data_batch, identity_batch, manager, "I33_LL_None", mask)
-                    compute_test_metrics(data_batch, gyro_batch, manager, "gyro_LL_None", mask)
-                    compute_test_metrics(data_batch, output_batch, manager, "ours_LL_None", mask)
-                    compute_metrics(data_batch, output_batch, manager, "ours_LL_" + str(idx))
-                elif data_batch["label"][0] == "Fog":
-                    compute_test_metrics(data_batch, identity_batch, manager, "I33_Fog_None", mask)
-                    compute_test_metrics(data_batch, gyro_batch, manager, "gyro_Fog_None", mask)
-                    compute_test_metrics(data_batch, output_batch, manager, "ours_Fog_None", mask)
-                    compute_metrics(data_batch, output_batch, manager, "ours_Fog_" + str(idx))
-                elif data_batch["label"][0] == "SNOW":
-                    compute_test_metrics(data_batch, identity_batch, manager, "I33_SNOW_None", mask)
-                    compute_test_metrics(data_batch, gyro_batch, manager, "gyro_SNOW_None", mask)
-                    compute_test_metrics(data_batch, output_batch, manager, "ours_SNOW_None", mask)
-                    compute_metrics(data_batch, output_batch, manager, "ours_SNOW_" + str(idx))
-                else:
-                    raise Exception("wrong scene type: {}".format(data_batch["label"][0]))
-
-            print_metrics(manager)
-            print_test_metrics(manager)
-
-            # Update
-            manager.train_status['cur_test_score'] = manager.test_status['nn_epe'].avg
-
-    print_test_metrics(manager)
+            # print results for homography (on GHOF-Clean) and optical flow (on GHOF-Clean and GHOF-Final)
+            utils.print_overall_test_metrics(manager)
 
 
 def print_metrics(manager):

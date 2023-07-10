@@ -5,6 +5,17 @@ import coloredlogs
 
 import numpy as np
 
+from termcolor import colored
+
+
+def print_overall_test_metrics(manager):
+    print_str_flow_ghof = ''
+    for k, v in manager.test_status.items():
+        print_str_flow_ghof += '{}: {:.4f}  '.format(k, v.avg)
+
+    manager.logger.info(colored('GHOF: Optical Flow Results: ', 'red', attrs=['bold']))
+    manager.logger.info(colored(print_str_flow_ghof, 'green', attrs=['bold']))
+
 
 class Params():
     """Class that loads hyperparameters from a json file.
@@ -89,8 +100,7 @@ def tensor_gpu(batch, check_on=True):
     def check_on_gpu(tensor_):
         if isinstance(tensor_, np.ndarray):
             tensor_ = torch.from_numpy(tensor_)
-        if isinstance(tensor_, str) or isinstance(tensor_, list) or isinstance(
-                tensor_, dict):
+        if isinstance(tensor_, str) or isinstance(tensor_, list) or isinstance(tensor_, dict):
             tensor_g = tensor_
         else:
             tensor_g = tensor_.cuda()
@@ -152,9 +162,7 @@ def set_logger(log_path):
     #     stream_handler.setFormatter(logging.Formatter('%(message)s'))
     #     logger.addHandler(stream_handler)
 
-    coloredlogs.install(level='INFO',
-                        logger=logger,
-                        fmt='%(asctime)s %(name)s %(message)s')
+    coloredlogs.install(level='INFO', logger=logger, fmt='%(asctime)s %(name)s %(message)s')
     file_handler = logging.FileHandler(log_path)
     log_formatter = logging.Formatter('%(asctime)s - %(message)s')
     file_handler.setFormatter(log_formatter)
@@ -184,12 +192,8 @@ def save_dict_to_json(d, step, epoch, json_path):
 
 
 def weight_parameters(module):
-    return [
-        param for name, param in module.named_parameters() if "weight" in name
-    ]
+    return [param for name, param in module.named_parameters() if "weight" in name]
 
 
 def bias_parameters(module):
-    return [
-        param for name, param in module.named_parameters() if "bias" in name
-    ]
+    return [param for name, param in module.named_parameters() if "bias" in name]

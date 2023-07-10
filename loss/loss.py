@@ -416,3 +416,20 @@ def compute_test_metrics(data, endpoints, manager, name="epe", mask=None):
     for k, v in metrics.items():
         manager.test_status[k].update(val=v.item(), num=B)
     return metrics
+
+
+def compute_test_metrics_v2(data, endpoints):
+    gt_flow = data["gt_flow"]
+    flow_fw = endpoints["flow_fw"][0]
+    buf = flow_utils.flow_error_avg(flow_fw, gt_flow)
+    return buf
+
+
+def update_metrics(ret, metrics, B, manager, name):
+    epe, pck1, pck5 = ret[0], ret[1], ret[2]
+    metrics[name + '_epe'] = epe
+    # metrics[name + '_pck1'] = pck1
+    metrics[name + '_pck5'] = pck5
+
+    for k, v in metrics.items():
+        manager.test_status[k].update(val=v.item(), num=B)

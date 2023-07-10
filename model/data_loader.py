@@ -227,20 +227,21 @@ def fetch_dataloader(types, status_manager):
         if split in types:
             frame_path = os.path.join(status_manager.params.data_dir, "{}".format(split))
 
-            benchmark_path_gof_clean = "/data/fusion_gyro_optical_flow/deep_gyro_of_fusion/work/SGF_ablation_study/dataset/GOF_benchmark_5_scenes.npy"
-            benchmark_path_gof_final = "/data/jupyter/fusion_gyro_of/GOF数据集/GOF_final_20220421.npy"
+            benchmark_path_gof_clean = "/data/fusion_gyro_optical_flow/deep_gyro_of_fusion/work/SGF_ablation_study/dataset/GHOF_Clean_20230705.npy"
+            benchmark_path_gof_final = "/data/fusion_gyro_optical_flow/deep_gyro_of_fusion/work/SGF_ablation_study/dataset/GHOF_Final_20230705.npy"
 
             # use the train_transformer if training data, else use eval_transformer without random flip
             if split == 'train':
-                ds = ConcatDataset([
-                    FrameDataset(frame_path,
-                                 input_transform=input_transform,
-                                 spatial_transform=spatial_transform,
-                                 with_gt_flow=None,
-                                 evaluate_with_whole_img=None,
-                                 weather_transform=None),
-                    FrameDatasetV2(input_transform=input_transform, spatial_transform=spatial_transform)
-                ])
+                # ds = ConcatDataset([
+                #     FrameDataset(frame_path,
+                #                  input_transform=input_transform,
+                #                  spatial_transform=spatial_transform,
+                #                  with_gt_flow=None,
+                #                  evaluate_with_whole_img=None,
+                #                  weather_transform=None),
+                #     FrameDatasetV2(input_transform=input_transform, spatial_transform=spatial_transform)
+                # ])
+                ds = FrameDatasetV2(input_transform=input_transform, spatial_transform=spatial_transform)
                 dl = DataLoader(ds,
                                 batch_size=status_manager.params.hyperparameters.batch_size,
                                 shuffle=True,
