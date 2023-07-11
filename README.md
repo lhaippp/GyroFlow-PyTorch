@@ -19,7 +19,7 @@ Our presentation video: [[Youtube](https://www.youtube.com/watch?v=6gh40PyWdHM)]
 
 2023.07.10: We release the GHOF_Train that contains 9900 samples.
 
-The download link is [GoogleDrive](https://drive.google.com/file/d/1eG9W-AlKrQ_fsxT4As6wzGaewCksYxnK/view?usp=sharing) or [CDN](https://data.megengine.org.cn/research/gyroflow/GOF_Train.zip). Put the data into `./dataset/GHOF_Train`, and the contents of directories are as follows:
+The download link is [GoogleDrive](https://drive.google.com/file/d/1duHQBIWLOPHd5LxBBLpsy6-3FAg_kqNp/view?usp=sharing). Put the data into `./dataset/GHOF_Train`, and the contents of directories are as follows:
 
 ```
 ./dataset/GOF_Train
