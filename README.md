@@ -13,6 +13,8 @@ Our presentation video: [[Youtube](https://www.youtube.com/watch?v=6gh40PyWdHM)]
 
 ## Data Preparation
 
+We provide a toy demo to illustrate the process of converting gyroscope readings (i.e., angular velocity in row, pith, yaw) into an homography at [gyro-video-stabilization](https://github.com/lhaippp/gyro-video-stabilization), welcme to play with it
+
 ### GOF-Train
 
 2021.11.15: We release the GOF_Train that contains 2000 samples.
